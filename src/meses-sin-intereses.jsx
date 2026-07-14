@@ -93,6 +93,8 @@ export default function AppMSI() {
   const [pestana, setPestana] = useState("actuales"); // "actuales" | "historial" | "proyeccion"
   const [mostrarImportar, setMostrarImportar] = useState(false);
   const [errorImportar, setErrorImportar] = useState("");
+  const [ordenAntiguoPrimero, setOrdenAntiguoPrimero] = useState(true);
+  const [busqueda, setBusqueda] = useState("");
   const [form, setForm] = useState({
     nombre: "",
     monto: "",
@@ -309,7 +311,17 @@ export default function AppMSI() {
     };
   });
 
-  const lista = pestana === "actuales" ? actuales : historial;
+  const listaBase = pestana === "actuales" ? actuales : historial;
+  const textoBusqueda = busqueda.trim().toLowerCase();
+  const lista = [...listaBase]
+    .filter(
+      (c) =>
+        !textoBusqueda || c.nombre.toLowerCase().includes(textoBusqueda),
+    )
+    .sort((a, b) => {
+      const cmp = a.fecha.localeCompare(b.fecha) || a.id.localeCompare(b.id);
+      return ordenAntiguoPrimero ? cmp : -cmp;
+    });
 
   return (
     <div style={est.pagina}>
@@ -385,23 +397,74 @@ export default function AppMSI() {
           </button>
         </nav>
 
-        {/* Botones de acción */}
-        {!mostrarForm && pestana === "actuales" && (
-          <div style={{ display: "flex", gap: 10 }}>
-            <button onClick={abrirNueva} style={est.botonPrimario}>
-              + Registrar compra
-            </button>
-            {compras.length === 0 && (
+        {/* Botones de acción y búsqueda */}
+        {pestana !== "proyeccion" && (
+          <div style={{ marginBottom: 4 }}>
+            <div
+              style={{
+                display: "flex",
+                gap: 10,
+                alignItems: "center",
+                justifyContent: "space-between",
+                flexWrap: "wrap",
+              }}
+            >
+              <div style={{ display: "flex", gap: 10 }}>
+                {!mostrarForm && pestana === "actuales" && (
+                  <>
+                    <button onClick={abrirNueva} style={est.botonPrimario}>
+                      + Registrar compra
+                    </button>
+                    {compras.length === 0 && (
+                      <button
+                        onClick={() => {
+                          setMostrarImportar(true);
+                          setErrorImportar("");
+                        }}
+                        style={est.botonSecundario}
+                      >
+                        Importar CSV
+                      </button>
+                    )}
+                  </>
+                )}
+              </div>
               <button
-                onClick={() => {
-                  setMostrarImportar(true);
-                  setErrorImportar("");
+                onClick={() => setOrdenAntiguoPrimero((o) => !o)}
+                style={{
+                  ...est.botonSecundario,
+                  display: "inline-flex",
+                  alignItems: "center",
+                  gap: 6,
                 }}
-                style={est.botonSecundario}
+                title={
+                  ordenAntiguoPrimero
+                    ? "Cambiar a más nuevas primero"
+                    : "Cambiar a más antiguas primero"
+                }
               >
-                Importar CSV
+                {ordenAntiguoPrimero
+                  ? "Más nuevas primero"
+                  : "Más antiguas primero"}
+                <span aria-hidden="true" style={{ fontSize: 15, lineHeight: 1 }}>
+                  {ordenAntiguoPrimero ? "↓" : "↑"}
+                </span>
               </button>
-            )}
+            </div>
+            <input
+              className="msi-input"
+              style={{
+                ...est.input,
+                width: "100%",
+                boxSizing: "border-box",
+                marginTop: 12,
+              }}
+              type="search"
+              placeholder="Buscar por nombre de compra…"
+              value={busqueda}
+              onChange={(e) => setBusqueda(e.target.value)}
+              aria-label="Buscar compra por nombre"
+            />
           </div>
         )}
 
@@ -599,9 +662,11 @@ export default function AppMSI() {
         {/* Lista */}
         {pestana !== "proyeccion" && lista.length === 0 && !mostrarForm && (
           <p style={{ color: "#6b7a99", marginTop: 24, fontStyle: "italic" }}>
-            {pestana === "actuales"
-              ? "Aún no hay compras activas. Registra la primera para empezar a llevar el control."
-              : "Todavía no hay compras completadas en el historial."}
+            {listaBase.length > 0 && textoBusqueda
+              ? `No hay compras que coincidan con “${busqueda.trim()}”.`
+              : pestana === "actuales"
+                ? "Aún no hay compras activas. Registra la primera para empezar a llevar el control."
+                : "Todavía no hay compras completadas en el historial."}
           </p>
         )}
 
