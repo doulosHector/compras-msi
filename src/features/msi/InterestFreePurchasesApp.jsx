@@ -97,6 +97,7 @@ export default function InterestFreePurchasesApp() {
           <PurchaseForm
             form={form}
             error={error}
+            editingId={editingId}
             isEditing={Boolean(editingId)}
             onChange={setForm}
             onSubmit={savePurchase}

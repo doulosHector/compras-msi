@@ -1,21 +1,30 @@
+import { useEffect, useRef } from "react";
 import { styles } from "../styles";
 import { formatCurrency } from "../utils/format";
 
 export function PurchaseForm({
   form,
   error,
+  editingId,
   isEditing,
   onChange,
   onSubmit,
   onCancel,
 }) {
+  const formRef = useRef(null);
+
+  useEffect(() => {
+    if (!editingId) return;
+    formRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }, [editingId]);
+
   const estimatedInstallment =
     parseFloat(form.amount) > 0 && parseInt(form.months, 10) > 0
       ? formatCurrency(parseFloat(form.amount) / parseInt(form.months, 10))
       : "—";
 
   return (
-    <section style={styles.form}>
+    <section ref={formRef} style={styles.form}>
       <h2 style={styles.formTitle}>
         {isEditing ? "Editar compra" : "Nueva compra"}
       </h2>
