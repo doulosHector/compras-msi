@@ -1,4 +1,5 @@
-import AppMSI from "./meses-sin-intereses";
+import InterestFreePurchasesApp from "./features/msi";
+
 export default function App() {
-  return <AppMSI />;
+  return <InterestFreePurchasesApp />;
 }
