@@ -1,3 +1,4 @@
+import { formatCurrency } from "../utils/format";
 import { PurchaseCard } from "./PurchaseCard";
 
 export function PurchaseList({
@@ -11,6 +12,10 @@ export function PurchaseList({
   onDelete,
 }) {
   if (tab === "projection") return null;
+
+  const searchInstallmentTotal = searchText
+    ? list.reduce((sum, purchase) => sum + purchase.installment, 0)
+    : 0;
 
   return (
     <>
@@ -41,6 +46,21 @@ export function PurchaseList({
           />
         ))}
       </div>
+
+      {searchText && list.length > 0 && (
+        <p
+          style={{
+            marginTop: 12,
+            marginBottom: 0,
+            textAlign: "right",
+            fontSize: 13,
+            color: "#5a6a90",
+            fontVariantNumeric: "tabular-nums",
+          }}
+        >
+          Suma de mensualidades: {formatCurrency(searchInstallmentTotal)}
+        </p>
+      )}
     </>
   );
 }
