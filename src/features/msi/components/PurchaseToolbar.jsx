@@ -58,20 +58,51 @@ export function PurchaseToolbar({
           </span>
         </button>
       </div>
-      <input
-        className="msi-input"
-        style={{
-          ...styles.input,
-          width: "100%",
-          boxSizing: "border-box",
-          marginTop: 12,
-        }}
-        type="search"
-        placeholder="Buscar por nombre de compra…"
-        value={search}
-        onChange={(event) => onSearchChange(event.target.value)}
-        aria-label="Buscar compra por nombre"
-      />
+      <div style={{ position: "relative", marginTop: 12 }}>
+        <input
+          className="msi-input"
+          style={{
+            ...styles.input,
+            width: "100%",
+            boxSizing: "border-box",
+            paddingRight: search ? 36 : undefined,
+          }}
+          type="search"
+          placeholder="Buscar por nombre de compra…"
+          value={search}
+          onChange={(event) => onSearchChange(event.target.value)}
+          aria-label="Buscar compra por nombre"
+        />
+        {search && (
+          <button
+            type="button"
+            onClick={() => onSearchChange("")}
+            aria-label="Borrar búsqueda"
+            title="Borrar búsqueda"
+            style={{
+              position: "absolute",
+              right: 8,
+              top: "50%",
+              transform: "translateY(-50%)",
+              width: 20,
+              height: 20,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: "#d0d8ea",
+              border: "none",
+              borderRadius: "50%",
+              color: "#3a4a70",
+              cursor: "pointer",
+              fontSize: 14,
+              lineHeight: 1,
+              padding: 0,
+            }}
+          >
+            ×
+          </button>
+        )}
+      </div>
     </div>
   );
 }

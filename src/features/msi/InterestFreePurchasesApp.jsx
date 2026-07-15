@@ -51,6 +51,7 @@ export default function InterestFreePurchasesApp() {
       <style>{`
         .msi-input:hover { border-color: #3d6bce; }
         .msi-input:focus { outline: none; border-color: #3d6bce; box-shadow: 0 0 0 3px rgba(61,107,206,0.18); }
+        .msi-input[type="search"]::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
       `}</style>
       <div style={styles.container}>
         <AppHeader
